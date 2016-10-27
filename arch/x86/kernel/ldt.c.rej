@@ -1,0 +1,64 @@
+--- arch/x86/kernel/ldt.c
++++ arch/x86/kernel/ldt.c
+@@ -235,34 +257,39 @@ static int write_ldt(void __user *ptr, unsigned long bytecount, int oldmode)
+ 			goto out;
+ 	}
+ 
+-	mutex_lock(&mm->context.lock);
+-	if (ldt_info.entry_number >= mm->context.size) {
+-		error = alloc_ldt(&current->mm->context,
+-				  ldt_info.entry_number + 1, 1);
+-		if (error < 0)
+-			goto out_unlock;
+-	}
+-
+-	/* Allow LDTs to be cleared by the user. */
+-	if (ldt_info.base_addr == 0 && ldt_info.limit == 0) {
+-		if (oldmode || LDT_empty(&ldt_info)) {
+-			memset(&ldt, 0, sizeof(ldt));
+-			goto install;
++	if ((oldmode && !ldt_info.base_addr && !ldt_info.limit) ||
++	    LDT_empty(&ldt_info)) {
++		/* The user wants to clear the entry. */
++		memset(&ldt, 0, sizeof(ldt));
++	} else {
++		if (!IS_ENABLED(CONFIG_X86_16BIT) && !ldt_info.seg_32bit) {
++			error = -EINVAL;
++			goto out;
+ 		}
++
++		fill_ldt(&ldt, &ldt_info);
++		if (oldmode)
++			ldt.avl = 0;
+ 	}
+ 
+-	if (!IS_ENABLED(CONFIG_X86_16BIT) && !ldt_info.seg_32bit) {
+-		error = -EINVAL;
++	mutex_lock(&mm->context.lock);
++
++	old_ldt = mm->context.ldt;
++	oldsize = old_ldt ? old_ldt->size : 0;
++	newsize = max((int)(ldt_info.entry_number + 1), oldsize);
++
++	error = -ENOMEM;
++	new_ldt = alloc_ldt_struct(newsize);
++	if (!new_ldt)
+ 		goto out_unlock;
+-	}
+ 
+-	fill_ldt(&ldt, &ldt_info);
+-	if (oldmode)
+-		ldt.avl = 0;
++	if (old_ldt)
++		memcpy(new_ldt->entries, old_ldt->entries, oldsize * LDT_ENTRY_SIZE);
++	new_ldt->entries[ldt_info.entry_number] = ldt;
++	finalize_ldt_struct(new_ldt);
+ 
+-	/* Install the new entry ...  */
+-install:
+-	write_ldt_entry(mm->context.ldt, ldt_info.entry_number, &ldt);
++	install_ldt(mm, new_ldt);
++	free_ldt_struct(old_ldt);
+ 	error = 0;
+ 
+ out_unlock:

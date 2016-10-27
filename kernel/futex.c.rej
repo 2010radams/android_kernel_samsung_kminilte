@@ -1,0 +1,20 @@
+--- kernel/futex.c
++++ kernel/futex.c
+@@ -1369,10 +1470,16 @@ static int futex_requeue(u32 __user *uaddr1, unsigned int flags,
+ 	struct futex_hash_bucket *hb1, *hb2;
+ 	struct plist_head *head1;
+ 	struct futex_q *this, *next;
+-	u32 curval2;
+ 
+ 	if (requeue_pi) {
+ 		/*
++		 * Requeue PI only works on two distinct uaddrs. This
++		 * check is only valid for private futexes. See below.
++		 */
++		if (uaddr1 == uaddr2)
++			return -EINVAL;
++
++		/*
+ 		 * requeue_pi requires a pi_state, try to allocate it now
+ 		 * without any locks in case it fails.
+ 		 */
