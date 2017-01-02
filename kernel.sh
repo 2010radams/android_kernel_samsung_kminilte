@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export ARCH=arm
-export CROSS_COMPILE=/opt/toolchains/crosstool/arm-cortex_a7-linux-gnueabihf-Linaro-SaberMod_6.2/bin/arm-eabi-
+export CROSS_COMPILE=/opt/toolchains/crosstool/arm-cortex_a7-linux-gnueabihf-UBERTC_6.3/bin/arm-eabi-
 
 
 make mrproper
