@@ -6,8 +6,8 @@
  * Common definitions for all gcc versions go here.
  */
 #define GCC_VERSION (__GNUC__ * 10000 \
-		   + __GNUC_MINOR__ * 100 \
-		   + __GNUC_PATCHLEVEL__)
+           + __GNUC_MINOR__ * 100 \
+           + __GNUC_PATCHLEVEL__)
 
 
 /* Optimization barrier */
@@ -32,9 +32,9 @@
  * the inline assembly constraint from =g to =r, in this particular
  * case either is valid.
  */
-#define RELOC_HIDE(ptr, off)					\
-  ({ unsigned long __ptr;					\
-    __asm__ ("" : "=r"(__ptr) : "0"(ptr));		\
+#define RELOC_HIDE(ptr, off)                    \
+  ({ unsigned long __ptr;                   \
+    __asm__ ("" : "=r"(__ptr) : "0"(ptr));      \
     (typeof(ptr)) (__ptr + (off)); })
 
 /* Make the optimizer believe the variable can be manipulated arbitrarily. */
@@ -53,19 +53,19 @@
  */
 #if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
     !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
-# define inline		inline		__attribute__((always_inline))
-# define __inline__	__inline__	__attribute__((always_inline))
-# define __inline	__inline	__attribute__((always_inline))
+# define inline     inline      __attribute__((always_inline))
+# define __inline__ __inline__  __attribute__((always_inline))
+# define __inline   __inline    __attribute__((always_inline))
 #else
 /* A lot of inline functions can cause havoc with function tracing */
-# define inline		inline		notrace
-# define __inline__	__inline__	notrace
-# define __inline	__inline	notrace
+# define inline     inline      notrace
+# define __inline__ __inline__  notrace
+# define __inline   __inline    notrace
 #endif
 
-#define __deprecated			__attribute__((deprecated))
-#define __packed			__attribute__((packed))
-#define __weak				__attribute__((weak))
+#define __deprecated            __attribute__((deprecated))
+#define __packed            __attribute__((packed))
+#define __weak              __attribute__((weak))
 
 /*
  * it doesn't make sense on ARM (currently the only user of __naked) to trace
@@ -77,9 +77,9 @@
  * therefore they must be noinline and noclone.  GCC 4.[56] currently fail to enforce
  * this, so we must do so ourselves.  See GCC PR44290.
  */
-#define __naked				__attribute__((naked)) noinline __noclone notrace
+#define __naked             __attribute__((naked)) noinline __noclone notrace
 
-#define __noreturn			__attribute__((noreturn))
+#define __noreturn          __attribute__((noreturn))
 
 /*
  * From the GCC manual:
@@ -91,14 +91,14 @@
  * would be.
  * [...]
  */
-#define __pure				__attribute__((pure))
-#define __aligned(x)			__attribute__((aligned(x)))
-#define __printf(a, b)			__attribute__((format(printf, a, b)))
-#define __scanf(a, b)			__attribute__((format(scanf, a, b)))
-#define  noinline			__attribute__((noinline))
-#define __attribute_const__		__attribute__((__const__))
-#define __maybe_unused			__attribute__((unused))
-#define __always_unused			__attribute__((unused))
+#define __pure              __attribute__((pure))
+#define __aligned(x)            __attribute__((aligned(x)))
+#define __printf(a, b)          __attribute__((format(printf, a, b)))
+#define __scanf(a, b)           __attribute__((format(scanf, a, b)))
+#define  noinline           __attribute__((noinline))
+#define __attribute_const__     __attribute__((__const__))
+#define __maybe_unused          __attribute__((unused))
+#define __always_unused         __attribute__((unused))
 
 /* gcc version specific checks */
 
@@ -218,7 +218,7 @@
 #endif /* gcc version >= 40000 specific checks */
 
 #if !defined(__noclone)
-#define __noclone	/* not needed */
+#define __noclone   /* not needed */
 #endif
 
 /*
@@ -227,4 +227,4 @@
  */
 #define uninitialized_var(x) x = x
 
-#define __always_inline		inline __attribute__((always_inline))
+#define __always_inline     inline __attribute__((always_inline))

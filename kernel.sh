@@ -32,7 +32,7 @@ function newLine() {
 
 # Configure build
 export ARCH=arm
-export CROSS_COMPILE=/opt/toolchains/crosstool/arm-cortex_a7-UBERTC_8/bin/arm-eabi-
+export CROSS_COMPILE=/opt/toolchains/crosstool/arm-cortex_a7-UBERTC_7/bin/arm-eabi-
 
 # Show ASCII TEXT
 echo -e ${RED}; newLine
@@ -49,7 +49,7 @@ echo "  /\ /\ ___  _ __  _ __    ___ | |         /\ \ \  ";
 echo " / //_// _ \| '__|| '_ \  / _ \| | _____  /  \/ /  ";
 echo "/ __ \|  __/| |   | | | ||  __/| ||_____|/ /\  /   ";
 echo "\/  \/ \___||_|   |_| |_| \___||_|       \_\ \/    ";
-echo "                                                   "; 
+echo "                                                   ";
 echo -e "================================================"; newLine; newLine
 
 
@@ -62,7 +62,7 @@ echoText "CLEANING UP"
 make mrproper
 touch .scmversion
 echoText "CREATING CONFIG"
-make g800f_custom_defconfig 
+make g800f_custom_defconfig
 echoText "STARTING BUILD"
 make -j4
 
